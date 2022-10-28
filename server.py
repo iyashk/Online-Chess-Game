@@ -25,9 +25,6 @@ connections = 0
 
 games = {0: Board(8, 8)}
 
-spectartor_ids = []
-specs = 0
-
 
 def threaded_client(conn, game, spec=False):
     global pos, games, currentId, connections, specs
