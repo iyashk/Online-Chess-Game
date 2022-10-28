@@ -111,52 +111,9 @@ def threaded_client(conn, game, spec=False):
         print("[DISCONNECT] Player", name, "left game", game)
         conn.close()
 
-    else:
-        available_games = list(games.keys())
-        game_ind = 0
-        bo = games[available_games[game_ind]]
-        bo.start_user = "s"
-        data_string = pickle.dumps(bo)
-        conn.send(data_string)
-
-        while True:
-            available_games = list(games.keys())
-            bo = games[available_games[game_ind]]
-            try:
-                d = conn.recv(128)
-                data = d.decode("utf-8")
-                if not d:
-                    break
-                else:
-                    try:
-                        if data == "forward":
-                            print("[SPECTATOR] Moved Games forward")
-                            game_ind += 1
-                            if game_ind >= len(available_games):
-                                game_ind = 0
-                        elif data == "back":
-                            print("[SPECTATOR] Moved Games back")
-                            game_ind -= 1
-                            if game_ind < 0:
-                                game_ind = len(available_games) - 1
-
-                        bo = games[available_games[game_ind]]
-                    except:
-                        print("[ERROR] Invalid Game Recieved from Spectator")
-
-                    sendData = pickle.dumps(bo)
-                    conn.sendall(sendData)
-
-            except Exception as e:
-                print(e)
-
-        print("[DISCONNECT] Spectator left game", game)
-        specs -= 1
-        conn.close()
-
 
 while True:
-    read_specs()
+    print(connections)
     if connections < 6:
         conn, addr = s.accept()
         spec = False
@@ -174,13 +131,6 @@ while True:
             except:
                 g = 0
                 games[g] = Board(8, 8)
-
-        '''if addr[0] in spectartor_ids and specs == 0:
-            spec = True
-            print("[SPECTATOR DATA] Games to view: ")
-            print("[SPECTATOR DATA]", games.keys())
-            g = 0
-            specs += 1'''
 
         print("[DATA] Number of Connections:", connections+1)
         print("[DATA] Number of Games:", len(games))
